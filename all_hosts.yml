@@ -15,7 +15,7 @@
        mode: 0666
        owner: "{{ hdfs_user }}"
        group: "{{ hdfs_user }}"
-       checksum: "{{ sha512 }}"
+       checksum: "{{ hadoop_sha512 }}"
 
    - name: Extract hadoop-3.3.1-aarch64.tar.gz to /home/hdfs/hadoop-3.3.1
      ansible.builtin.unarchive:
@@ -25,6 +25,26 @@
        group: "{{ hdfs_user }}"
        creates: "/home/{{ hdfs_user }}/hadoop-3.3.1"
        remote_src: yes
+
+
+   - name: download pyspark from remote
+     get_url:
+       url: "{{ spark_url }}"
+       dest: "{{spark_dest}}"
+       mode: 0666
+       owner: "{{ hdfs_user }}"
+       group: "{{ hdfs_user }}"
+       checksum: "{{ spark_checksum }}"
+
+   - name: Extract spark-3.1.2-bin-hadoop3.2.tgz
+     ansible.builtin.unarchive:
+       src: "{{spark_dest}}"
+       dest: "/home/{{ hdfs_user }}"
+       owner: "{{ hdfs_user }}"
+       group: "{{ hdfs_user }}"
+       creates: "/home/{{ hdfs_user }}/spark-3.1.2"
+       remote_src: yes
+
 
 
    - name: check if copy of the hadoop-3.3.1/etc/hadoop/hadoop-env.sh exists

@@ -9,14 +9,23 @@
           update_cache: yes
           name: openjdk-11-jdk
           state: present
-  - name: Install openssh-server openssh-client
+
+  - name: Install openssh-server openssh-client, pip3
     apt:
             name: "{{item}}"
             state: present
     loop:
       - openssh-server
       - openssh-client
+#      - unzip
 
+
+#  - name: Install pyspark
+#    pip:
+#            name:  pyspark
+#            state: present
+#            version: 3.1.2
+#            executable: pip3
 
 
   - name: Ensure group "hadoop" exists
