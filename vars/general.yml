@@ -5,11 +5,13 @@ hadoop_sha512: sha512:68549f14d97b519e6afbac5511afd330f3d271dfc6772cb1f8c0412e97
 
 hdfs_user: "hdfs"
 
-hadoop_home: "/home/{{hdfs_user}}/hadoop-3.3.1"
-
 hdfs_home: "/home/{{ hdfs_user }}"
+
+hadoop_home: "{{hdfs_home}}/hadoop-3.3.1"
 
 spark_url: https://ftpmirror1.infania.net/mirror/apache/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz
 spark_dest: "/home/{{hdfs_user}}/spark-3.1.2-bin-hadoop3.2.tgz"
 
 spark_checksum: sha512:2385CB77 2F21B014 CE2ABD6B 8F5E8157 21580D6E 8BC42A26 D70BBCDD A8D303D8 86A6F12B 36D40F69 71B5547B 70FAE62B 5A96146F 0421CB93 D4E51491 308EF5D5
+
+spark_home: "{{ hdfs_home }}/spark-3.1.2-bin-hadoop3.2"

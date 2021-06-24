@@ -111,6 +111,16 @@
         remote_src: no
 
 
+   - name: copying conf/workers for spark
+     ansible.builtin.template:
+        src: files/workers
+        dest: "{{ spark_home }}/conf/workers"
+        owner: "{{ hdfs_user }}"
+        group: "{{ hdfs_user }}"
+        mode: '0644'
+        remote_src: no
+
+
 #   - name: creating "fs_datanode_data_dir" on hosts
 #     file:
 #              state: directory
