@@ -1,0 +1,79 @@
+---
+
+- hosts: all
+  become: yes
+  vars_files: vars/general.yml
+  tasks:
+  - name: Update system and install openjdk-11-jdk
+    apt:
+          update_cache: yes
+          name: openjdk-11-jdk
+          state: present
+  - name: Install openssh-server openssh-client
+    apt:
+            name: "{{item}}"
+            state: present
+    loop:
+      - openssh-server
+      - openssh-client
+
+
+
+  - name: Ensure group "hadoop" exists
+    ansible.builtin.group:
+      name: hadoop
+      state: present
+
+  - name: Create  user hdfs
+    user:
+     name: "{{ hdfs_user }}"
+     password: "{{ hdfs_user }}"
+     groups:
+      - hadoop
+     state: present
+     create_home: True
+     shell: /bin/bash
+#     generate_ssh_key: yes
+#     ssh_key_bits: 2048
+#     ssh_key_file: .ssh/id_rsa
+
+
+  - name: create .ssh folder  for hdfs user
+    ansible.builtin.file:
+      path: /home/{{ hdfs_user }}/.ssh/
+      owner: "{{ hdfs_user }}"
+      group: "{{ hdfs_user }}"
+      mode: '0700'
+      state: directory
+
+
+  - name: copying private and public keys to .ssh of hdfs
+    copy:
+      src: sshkeys/{{ item }}
+      dest: "/home/{{hdfs_user}}/.ssh/"
+      mode: 0600
+      owner: "{{ hdfs_user }}"
+      group: "{{ hdfs_user }}"
+
+    loop:
+      - id_rsa
+      - id_rsa.pub
+
+
+  - name: copy public key for user hdfs to host
+    copy:
+      src: sshkeys/id_rsa.pub
+      dest: "/home/{{hdfs_user}}/.ssh/authorized_keys"
+      mode: 0600
+#            remote_src: yes
+      owner: "{{ hdfs_user }}"
+      group: "{{ hdfs_user }}"
+
+#  - name: Set authorized key for hdoop to authorized_keys
+#    copy:
+#            src: /home/hdoop/.ssh/id_rsa.pub
+#            dest: /home/hdoop/.ssh/authorized_keys
+#            mode: 0600
+#            remote_src: yes
+#            owner: hdoop
+#            group: hdoop

@@ -1,0 +1,7 @@
+# Inventory file
+
+[namenode]
+nuc5.kultur.org  ansible_user=xadmin ansible_ssh_private_key_file=/Users/alexey/.ssh/id_rsa_ansible   ansible_connection=ssh
+[datanode]
+nuc5.kultur.org  ansible_user=xadmin ansible_ssh_private_key_file=/Users/alexey/.ssh/id_rsa_ansible   ansible_connection=ssh
+nuc6.kultur.org  ansible_user=xadmin ansible_ssh_private_key_file=/Users/alexey/.ssh/id_rsa_ansible   ansible_connection=ssh

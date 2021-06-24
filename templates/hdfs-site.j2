@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+
+
+    #namenode configuration
+
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>{{ dfs_namenode_name_dir }}</value>
+    </property>
+
+    <property>
+        <name>dfs.blocksize</name>
+        <value>268435456</value>
+    </property>
+
+     <property>
+        <name>dfs.namenode.handler.count</name>
+        <value>100</value>
+    </property>
+
+
+    # data node configuration
+
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>{{ fs_datanode_data_dir }}</value>
+    </property>
+
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+
+
+</configuration>

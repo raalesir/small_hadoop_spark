@@ -1,0 +1,138 @@
+---
+- hosts: all
+  become: yes
+  vars_files:
+      - vars/general.yml
+      - vars/datanode.yml
+      - vars/namenode.yml
+
+
+  tasks:
+   - name: download Hadoop 3.3.1 from remote
+     get_url:
+       url: "{{ hadoop_url }}"
+       dest: "{{hadoop_dest}}"
+       mode: 0666
+       owner: "{{ hdfs_user }}"
+       group: "{{ hdfs_user }}"
+       checksum: "{{ sha512 }}"
+
+   - name: Extract hadoop-3.3.1-aarch64.tar.gz to /home/hdfs/hadoop-3.3.1
+     ansible.builtin.unarchive:
+       src: "{{hadoop_dest}}"
+       dest: "/home/{{ hdfs_user }}"
+       owner: "{{ hdfs_user }}"
+       group: "{{ hdfs_user }}"
+       creates: "/home/{{ hdfs_user }}/hadoop-3.3.1"
+       remote_src: yes
+
+
+   - name: check if copy of the hadoop-3.3.1/etc/hadoop/hadoop-env.sh exists
+     stat: path="{{ hadoop_home }}/etc/hadoop/hadoop-env.sh.bak"
+     register: st
+
+
+   - name: Make copy of the hadoop-3.3.1/etc/hadoop/hadoop-env.sh
+     ansible.builtin.copy:
+      src: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"
+      dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh.bak"
+      owner: "{{ hdfs_user }}"
+      group: "{{ hdfs_user }}"
+      mode: '0644'
+      remote_src: yes
+     when: not st.stat.exists
+
+
+   - name: copying hadoop-env.sh to host
+     ansible.builtin.copy:
+        src: files/hadoop-env.sh
+        dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"
+        owner: "{{ hdfs_user }}"
+        group: "{{ hdfs_user }}"
+        mode: '0644'
+        remote_src: no
+
+
+   - name: copying workers to /etc/workers
+     ansible.builtin.template:
+        src: files/workers
+        dest: "{{ hadoop_home }}/etc/hadoop/workers"
+        owner: "{{ hdfs_user }}"
+        group: "{{ hdfs_user }}"
+        mode: '0644'
+        remote_src: no
+
+   - name: setting HADOOP_HOME variable
+     ansible.builtin.template:
+        src: files/hadoop_home.sh
+        dest: /etc/profile.d/hadoop-home.sh
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: no
+
+
+   - name: setting core-site.xml
+     ansible.builtin.template:
+        src: templates/core-site.j2
+        dest: "{{ hadoop_home }}/etc/hadoop/core-site.xml"
+        owner: "{{ hdfs_user }}"
+        group: "{{ hdfs_user }}"
+        mode: '0644'
+        remote_src: no
+
+   - name: setting hdfs-site.xml
+     ansible.builtin.template:
+        src: templates/hdfs-site.j2
+        dest: "{{ hadoop_home }}/etc/hadoop/hdfs-site.xml"
+        owner: "{{ hdfs_user }}"
+        group: "{{ hdfs_user }}"
+        mode: '0644'
+        remote_src: no
+
+
+#   - name: creating "fs_datanode_data_dir" on hosts
+#     file:
+#              state: directory
+#              path:  "{{ fs_datanode_data_dir }}"
+#              owner: "{{ hdfs_user }}"
+#              group: "{{ hdfs_user }}"
+#     become: true
+
+
+
+- hosts: namenode
+  vars_files:
+      - vars/namenode.yml
+      - vars/general.yml
+
+  tasks:
+    - name: "Creating Name Node Directory"
+      file:
+              state: directory
+              path:  "{{ dfs_namenode_name_dir }}"
+              owner: "{{ hdfs_user }}"
+              group: "{{ hdfs_user }}"
+      become: true
+
+
+
+
+#   - name: Check if JAVA_HOME is set...
+#     lineinfile:
+#       state: present
+#       path: "{{ hadoop_home }}/etc/hadoop-env.sh"
+#       search_string: "# export JAVA_HOME= "
+##     check_mode: true
+##     changed_when: false # This just makes things look prettier in the logs
+#     register: check
+#
+#
+#
+#   - name: Patching hadoop-3.3.1/etc/hadoop/hadoop-env.sh
+#     lineinfile:
+#            path: "{{ hadoop_home }}/etc/hadoop-env.sh"
+#            search_string: "# export JAVA_HOME="
+#            state: present
+#            line: "export JAVA_HOME=\"/usr/lib/jvm/java-11-openjdk-amd64/\" \n"
+#     when: check is undefined

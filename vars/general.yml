@@ -1,0 +1,10 @@
+hadoop_url: https://ftpmirror1.infania.net/mirror/apache/hadoop/common/hadoop-3.3.1/hadoop-3.3.1-aarch64.tar.gz
+hadoop_dest: "/home/{{hdfs_user}}/hadoop-3.3.1-aarch64.tar.gz"
+
+sha512: sha512:68549f14d97b519e6afbac5511afd330f3d271dfc6772cb1f8c0412e975e9fa364267ade697f1b0e69ca0cae3b5e43301ae0f899e7d7b3d6bf5ad4ec6f721ff3
+
+hdfs_user: "hdfs"
+
+hadoop_home: "/home/{{hdfs_user}}/hadoop-3.3.1"
+
+hdfs_home: "/home/{{ hdfs_user }}"

@@ -1,0 +1,7 @@
+datanode_dir: '/dn'
+namenode_ip: '13.233.119.102'
+port_number: 9001
+
+
+fs_datanode_data_dir: "{{ hdfs_home }}/data"
+#fs.datanode.data.dir: /mnt/disk1/hadoop/hdfs/data,/mnt/disk2/hadoop/hdfs/data,/mnt/disk3/hadoop/hdfs/data,/mnt/disk4/hadoop/hdfs/data
